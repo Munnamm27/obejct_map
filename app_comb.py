@@ -113,7 +113,6 @@ app.layout = dbc.Container([
     Input("mapbox", "value"),
 )
 def map(chips, map_type):
-    print("hello")
     def data_filter(data):
         return any(x in data for x in [chips])
     data = df[df.objects.apply(data_filter)]
@@ -124,30 +123,30 @@ def map(chips, map_type):
 
     fig.add_trace(go.Scattermapbox(
         name="All Cake",
-        lat=df['lat'],
-        lon=df['lng'],
+        lat=df['lat'].values,
+        lon=df['lng'].values,
         mode='markers',
         marker=go.scattermapbox.Marker(
             size=6,
             color='#ff9900',
             opacity=1
         ),
-        text=df["id"],
+        text=df["merchant_name"],
         # hovertemplate='ID: {}',
         hoverinfo='text'
     ))
 
     fig.add_trace(go.Scattermapbox(
 
-        lat=data['lat'],
-        lon=data['lng'],
+        lat=data['lat'].values,
+        lon=data['lng'].values,
         mode='markers',
         marker=go.scattermapbox.Marker(
             size=7,
-            color='blue',
+            color='#4e42f5',
             opacity=0.7
         ),
-        text=data["id"],
+        text=data["merchant_name"],
         hoverinfo='text',
         name="Selected Cake",
     ))
