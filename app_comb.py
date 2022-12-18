@@ -1,4 +1,3 @@
-from tabnanny import check
 import numpy as np
 import plotly.express as px
 import dash
@@ -9,8 +8,8 @@ import pandas as pd
 import plotly.graph_objs as go
 # from skimage import io
 
-df = pd.read_csv("inference_merged_data.csv", usecols=[
-                 "id", "merchant_name", 'address', 'lat', 'lng', 'objects','product_name'])
+df = pd.read_csv("inference_data_cake.csv", usecols=[
+                 "id", "merchant_name", 'address', 'lat', 'lng', 'objects'])
 
 df['objects'] = df.objects.apply(lambda x: str(x).split(','))
 
@@ -38,12 +37,12 @@ map_row = dbc.Row(
 
                 html.Br(),
                 html.H6("Product Type"),
-                dcc.Dropdown(["chips", "cake"], value="cake",
+                dcc.Dropdown(["Chips", "Cake"], value="Cake",
                                id='product'),
 
                 html.Br(),
-                html.H6("Select Brand"),
-                dcc.Dropdown(placeholder="Select Brand", id='chips', multi=False),
+                html.H6("Select Cake"),
+                dcc.Dropdown(['dan_cake',"no_dan_cake"], value='dan_cake', placeholder="Select Cake", id='chips', multi=False),
 
                 html.Br(),
                 html.H6("Area"),
@@ -90,6 +89,7 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LITERA],
                 meta_tags=[{'name': 'viewport',
                             'content': 'width=device-width, initial-scale=1.0'}]
                 )
+
 server=app.server
 
 app.layout = dbc.Container([
@@ -106,30 +106,14 @@ app.layout = dbc.Container([
     style={"backgroundColor": "#e7f7ff", }
 )
 
-@app.callback(
-    Output("chips", "options"),
-    Input("product", "value"),
-)
-
-def brand(prod_type):
-    if prod_type=='chips':
-        return ['detos', 'kurkure', 'curl',
-                              'alooz', 'sticks', 'ring',
-                              'sun', 'potato_crackers', 'zeros',
-                              'mr_twist', 'cheese_puff']
-    if prod_type == 'cake':
-        return ['dan_cake',"no_dan_cake"]
-
 
 @app.callback(
     Output("map", "figure"),
     Input("chips", "value"),
     Input("mapbox", "value"),
-    Input("product", "value"),
-
-
 )
-def map(chips, map_type,prod):
+def map(chips, map_type):
+    print("hello")
     def data_filter(data):
         return any(x in data for x in [chips])
     data = df[df.objects.apply(data_filter)]
@@ -139,7 +123,7 @@ def map(chips, map_type,prod):
     fig = go.Figure()
 
     fig.add_trace(go.Scattermapbox(
-        name=f"all {prod}",
+        name="All Cake",
         lat=df['lat'],
         lon=df['lng'],
         mode='markers',
@@ -165,7 +149,7 @@ def map(chips, map_type,prod):
         ),
         text=data["id"],
         hoverinfo='text',
-        name=f"Selected {prod}",
+        name="Selected Cake",
     ))
 
     fig.update_layout(
@@ -190,4 +174,4 @@ def map(chips, map_type,prod):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False, port=8050)
+    app.run_server(debug=True, port=8050)
