@@ -2,4 +2,5 @@ dash
 dash-auth
 dash-bootstrap-components
 pandas
+gunicorn
 
